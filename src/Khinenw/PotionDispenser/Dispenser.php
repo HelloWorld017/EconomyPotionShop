@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * Potion Dispenser, An potion dispenser for EconomyS.
+ * Copyright (C) 2015  Khinenw <deu07115@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ 
 namespace Khinenw\PotionDispenser;
 
 use Khinenw\PotionDispenser\task\TaskAutoSave;
@@ -30,6 +48,12 @@ class Dispenser extends PluginBase implements Listener{
 			(new Config($this->getDataFolder()."translation_en.yml", Config::YAML, yaml_parse(stream_get_contents($resource = $this->getResource("translation_en.yml")))))->save();
 			@fclose($resource);
 			$this->getLogger()->info(TextFormat::YELLOW."Extracted translation_en.yml!");
+		}
+
+		if(!file_exists($this->getDataFolder()."translation_ko.yml")){
+			(new Config($this->getDataFolder()."translation_ko.yml", Config::YAML, yaml_parse(stream_get_contents($resource = $this->getResource("translation_ko.yml")))))->save();
+			@fclose($resource);
+			$this->getLogger()->info(TextFormat::YELLOW."Extracted translation_ko.yml!");
 		}
 
 		if(!file_exists($this->getDataFolder()."config.yml")){
@@ -121,7 +145,7 @@ class Dispenser extends PluginBase implements Listener{
 
 		$event->setLine(0, $this->getTranslation("DISPENSER"));
 		$color = $effectInstance->isBad() ? TextFormat::RED : TextFormat::AQUA;
-		$event->setLine(1, $color.$this->getTranslation("POTION_NAME", $this->getServer()->getLanguage()->translate(new TextContainer($effectInstance->getName())), $amplifier));
+		$event->setLine(1, $color.$this->getTranslation("POTION_NAME", $this->getServer()->getLanguage()->translate(new TextContainer($effectInstance->getName())), $amplifier + 1));
 
 		if($effectInstance instanceof InstantEffect) {
 			$event->setLine(2, "");
@@ -194,7 +218,12 @@ class Dispenser extends PluginBase implements Listener{
 
 		$api = EconomyAPI::getInstance();
 		if($api->myMoney($event->getPlayer()) >= $this->dispensers[$dispenserId]["cost"]) {
-			$api->reduceMoney($event->getPlayer(), $this->dispensers[$dispenserId]["cost"], true, "PotionDispenser");
+			if($this->dispensers[$dispenserId]["cost"] > 0) {
+				$api->reduceMoney($event->getPlayer(), $this->dispensers[$dispenserId]["cost"], true, "PotionDispenser");
+			}else{
+				$api->addMoney($event->getPlayer(), - $this->dispensers[$dispenserId]["cost"], true, "PotionDispenser");
+			}
+
 			$event->getPlayer()->sendMessage(TextFormat::AQUA.$this->getTranslation("BOUGHT"));
 
 			if($this->dispensers[$dispenserId]["name"] === "clear"){
