@@ -11,7 +11,7 @@ NOT_YOUR_DISPENSER: 이 디스펜서는 당신 것이 아닙니다!
 DISPENSER_DESTROYED: 포션 디스펜서가 제거되었습니다!
 BOUGHT: 포션을 구매하였습니다!
 #1 : color, 2 : name, 3 : price, 4 : monetary unit
-BOUGHT_COLOR_NAME_MONEY: "포션 %s1[%s2]§r을 %s3%s4에 구매하였습니다!"
+BOUGHT_COLOR_NAME_MONEY: "포션 §o§l%s1[%s2]§r을 %s3%s4에 구매하였습니다!"
 NO_MONEY: 이 플러그인을 구매하기에 너무 가난합니다!
 DURATION: "기간: %s1초"
 CLEAR: 초기화

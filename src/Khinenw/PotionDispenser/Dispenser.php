@@ -259,7 +259,7 @@ class Dispenser extends PluginBase implements Listener{
 				$effectColor = $effect->getColor();
 				$event->getPlayer()->sendTip($this->getTranslation("BOUGHT_COLOR_NAME_MONEY", 
 						$this->getTextFormatFromColor($effectColor[0], $effectColor[1], $effectColor[2]),
-						$this->getServer()->getLanguage()->translate(new TextContainer($effectInstance->getName())),
+						$this->getServer()->getLanguage()->translate(new TextContainer($effect->getName())),
 						$this->dispensers[$dispenserId]["cost"],
 						$api->getMonetaryUnit()
 				));
@@ -328,9 +328,8 @@ class Dispenser extends PluginBase implements Listener{
 	public function getTextFormatFromColor($r, $g, $b){
 		$closest = null;
 		$closestFormat = TextFormat::AQUA;
-		
 		foreach($this->colorList as $colorFormat => $colorValue){
-			$currentVal = sqrt(($r - $colorValue[0])^2+($g - $colorValue[1])^2+($b - $colorValue[2])^2);
+			$currentVal = pow($r - $colorValue[0], 2) + pow($g - $colorValue[1], 2) + pow($b - $colorValue[2], 2);
 			if($closest === null || $closest > $currentVal){
 				$closest = $currentVal;
 				$closestFormat = $colorFormat;

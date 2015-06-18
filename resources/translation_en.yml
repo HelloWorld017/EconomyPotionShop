@@ -11,7 +11,7 @@ NOT_YOUR_DISPENSER: This dispenser is not yours!
 DISPENSER_DESTROYED: Dispenser Destroyed!
 BOUGHT: Successfully bought this potion!
 #1 : color, 2 : name, 3 : price, 4 : monetary unit
-BOUGHT_COLOR_NAME_MONEY: "Successfully bought %s1[%s2]§r potion for %s3%s4"
+BOUGHT_COLOR_NAME_MONEY: "Successfully bought §o§l%s1[%s2]§r potion for %s3%s4"
 NO_MONEY: You are too poor to buy this potion!
 DURATION: "DURATION: %s1s"
 CLEAR: Clear
