@@ -39,7 +39,25 @@ use pocketmine\utils\TextFormat;
 class Dispenser extends PluginBase implements Listener{
 
 	private $dispensers, $doubleTap, $itemPlaceList, $translations;
-
+	
+	public $colorList = array(
+		TextFormat::BLACK => array(0, 0, 0),
+		TextFormat::DARK_BLUE => array(0, 0, 170),
+		TextFormat::DARK_GREEN => array(0,170, 0),
+		TextFormat::DARK_AQUA => array(0, 170, 170),
+		TextFormat::DARK_RED => array(170, 0, 0),
+		TextFormat::DARK_PURPLE => array(170, 0, 170),
+		TextFormat::GOLD => array(255, 170, 0),
+		TextFormat::GRAY => array(170, 170, 170),
+		TextFormat::DARK_GRAY => array(55, 55, 55),
+		TextFormat::BLUE => array(55, 55, 255),
+		TextFormat::GREEN => array(55, 255, 55),
+		TextFormat::AQUA => array(55, 255, 255),
+		TextFormat::RED => array(255, 55, 55),
+		TextFormat::LIGHT_PURPLE => array(255, 55, 255),
+		TextFormat::YELLOW => array(255, 255, 55),
+		TextFormat::WHITE => array(255, 255, 255));
+	
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
 		$this->dispensers = (new Config($this->getDataFolder()."dispensers.yml", Config::YAML))->getAll();
@@ -107,7 +125,7 @@ class Dispenser extends PluginBase implements Listener{
 			), $event->getBlock(), $event->getPlayer());
 
 			$event->setLine(0, $this->getTranslation("DISPENSER"));
-			$event->setLine(1, TextFormat::GOLD.$this->getTranslation("POTION_NAME_NO_LEV", "Clear"));
+			$event->setLine(1, TextFormat::GOLD.$this->getTranslation("POTION_NAME_NO_LEV", $this->getTranslation("CLEAR")));
 			$event->setLine(2, "");
 			$event->setLine(3, $this->getTranslation("DISPENSER_COST", ((int) $text[3]).EconomyAPI::getInstance()->getMonetaryUnit()));
 
@@ -228,10 +246,23 @@ class Dispenser extends PluginBase implements Listener{
 
 			if($this->dispensers[$dispenserId]["name"] === "clear"){
 				$event->getPlayer()->removeAllEffects();
+				$event->getPlayer()->sendTip($this->getTranslation("BOUGHT_COLOR_NAME_MONEY", 
+						TextFormat::WHITE,
+						$this->getTranslation("CLEAR"),
+						$this->dispensers[$dispenserId]["cost"],
+						$api->getMonetaryUnit()
+				));
 			}else{
 				$effect = Effect::getEffect($this->dispensers[$dispenserId]["name"]);
 				$effect->setAmplifier($this->dispensers[$dispenserId]["amplifier"])->setDuration($this->dispensers[$dispenserId]["duration"]);
 				$event->getPlayer()->addEffect($effect);
+				$effectColor = $effect->getColor();
+				$event->getPlayer()->sendTip($this->getTranslation("BOUGHT_COLOR_NAME_MONEY", 
+						$this->getTextFormatFromColor($effectColor[0], $effectColor[1], $effectColor[2]),
+						$this->getServer()->getLanguage()->translate(new TextContainer($effectInstance->getName())),
+						$this->dispensers[$dispenserId]["cost"],
+						$api->getMonetaryUnit()
+				));
 			}
 
 		}else{
@@ -292,5 +323,20 @@ class Dispenser extends PluginBase implements Listener{
 
 	public function getDispenserList(){
 		return $this->dispensers;
+	}
+
+	public function getTextFormatFromColor($r, $g, $b){
+		$closest = null;
+		$closestFormat = TextFormat::AQUA;
+		
+		foreach($this->colorList as $colorFormat => $colorValue){
+			$currentVal = sqrt(($r - $colorValue[0])^2+($g - $colorValue[1])^2+($b - $colorValue[2])^2);
+			if($closest === null || $closest > $currentVal){
+				$closest = $currentVal;
+				$closestFormat = $colorFormat;
+			}
+		}
+		
+		return $closestFormat;
 	}
 }
