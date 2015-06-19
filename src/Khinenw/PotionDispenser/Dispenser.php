@@ -202,14 +202,14 @@ class Dispenser extends PluginBase implements Listener{
 			return;
 		}
 
-		if(!$event->getPlayer()->hasPermission("potiondispenser.use")){
-			$event->getPlayer()->sendMessage(TextFormat::RED.$this->getTranslation("NO_PERMISSION_USE"));
-		}
-
 		$dispenserId = $this->getDispenserId($event->getBlock());
 
 		if(!isset($this->dispensers[$dispenserId])){
 			return;
+		}
+		
+		if(!$event->getPlayer()->hasPermission("potiondispenser.use")){
+			$event->getPlayer()->sendMessage(TextFormat::RED.$this->getTranslation("NO_PERMISSION_USE"));
 		}
 
 		if(!isset($this->doubleTap[$event->getPlayer()->getName()])){
