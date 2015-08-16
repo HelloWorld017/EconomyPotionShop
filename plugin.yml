@@ -10,7 +10,7 @@ depend: [EconomyAPI]
 permissions:
   potiondispenser.*:
     description: "The permission for using features of dispenser."
-    default: true
+    default: op
     children:
       potiondispenser.use: 
         default: true
