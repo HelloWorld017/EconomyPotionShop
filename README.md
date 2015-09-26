@@ -1,5 +1,5 @@
 # Economy Potion Dispenser
-An potion dispenser for EconomyS
+A potion dispenser for EconomyS
 
 ----
 
