@@ -270,7 +270,7 @@ class Dispenser extends PluginBase implements Listener{
 			$event->getPlayer()->sendMessage(TextFormat::RED.$this->getTranslation("NO_MONEY"));
 		}
 
-		if($event->getItem()->isPlaceable()){
+		if($event->getItem()->canBePlaced()){
 			$this->itemPlaceList[$event->getPlayer()->getName()] = true;
 		}
 
