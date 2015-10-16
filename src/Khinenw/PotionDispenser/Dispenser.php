@@ -31,6 +31,7 @@ use pocketmine\event\block\SignChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\TextContainer;
+use pocketmine\item\Item;
 use pocketmine\Player;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
@@ -38,7 +39,7 @@ use pocketmine\utils\TextFormat;
 
 class Dispenser extends PluginBase implements Listener{
 
-	private $dispensers, $doubleTap, $itemPlaceList, $translations;
+	private $dispensers, $doubleTap, $itemPlaceList, $translations, $useOld;
 	
 	public $colorList = array(
 		TextFormat::BLACK => array(0, 0, 0),
@@ -61,6 +62,7 @@ class Dispenser extends PluginBase implements Listener{
 	public function onEnable(){
 		@mkdir($this->getDataFolder());
 		$this->dispensers = (new Config($this->getDataFolder()."dispensers.yml", Config::YAML))->getAll();
+		$this->useOld = (new \ReflectionClass(Item::class))->hasMethod("isPlaceable");
 
 		if(!file_exists($this->getDataFolder()."translation_en.yml")){
 			(new Config($this->getDataFolder()."translation_en.yml", Config::YAML, yaml_parse(stream_get_contents($resource = $this->getResource("translation_en.yml")))))->save();
@@ -208,6 +210,12 @@ class Dispenser extends PluginBase implements Listener{
 			return;
 		}
 
+        if(($this->useOld && $event->getItem()->isPlaceable()) || (!$this->useOld && $event->getItem()->canBePlaced())){
+            $this->itemPlaceList[$event->getPlayer()->getName()] = true;
+        }
+
+        $event->setCancelled(true);
+
 		if(!$event->getPlayer()->hasPermission("potiondispenser.use")){
 			$event->getPlayer()->sendMessage(TextFormat::RED.$this->getTranslation("NO_PERMISSION_USE"));
 			return;
@@ -269,12 +277,6 @@ class Dispenser extends PluginBase implements Listener{
 		}else{
 			$event->getPlayer()->sendMessage(TextFormat::RED.$this->getTranslation("NO_MONEY"));
 		}
-
-		if($event->getItem()->isPlaceable()){
-			$this->itemPlaceList[$event->getPlayer()->getName()] = true;
-		}
-
-		$event->setCancelled(true);
 	}
 
 	public function onBlockPlace(BlockPlaceEvent $event){

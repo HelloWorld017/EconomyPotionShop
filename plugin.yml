@@ -1,7 +1,7 @@
 #Khinenw's PotionDispenser
 name: EconomyPotionDispenser
 author: Khinenw
-version: "0.0.1"
+version: "0.0.2"
 description: "A potion dispenser for EconomyS"
 main: Khinenw\PotionDispenser\Dispenser
 api: 1.12.0
